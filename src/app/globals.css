@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --node-bg: #1a1a2e;
+  --node-surface: #232340;
+  --node-border: #3d3d5c;
+  --canvas-bg: #0f0f1a;
+  --canvas-grid: #1a1a2e;
+  --accent-primary: #00d4aa;
+  --accent-secondary: #4ecdc4;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--canvas-bg);
+  color: #e0e0e0;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+}
+
+/* React Flow Customization */
+.react-flow {
+  background: var(--canvas-bg) !important;
+}
+
+.react-flow__background {
+  background: var(--canvas-bg) !important;
+}
+
+.react-flow__background-pattern {
+  stroke: var(--canvas-grid) !important;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2px;
+}
+
+.react-flow__handle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--node-border);
+  background: var(--node-surface);
+  transition: all 0.15s ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.2);
+}
+
+.react-flow__handle-left {
+  left: -6px;
+}
+
+.react-flow__handle-right {
+  right: -6px;
+}
+
+.react-flow__node {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px var(--accent-primary), 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.react-flow__minimap {
+  background: var(--node-surface) !important;
+  border-radius: 8px;
+  border: 1px solid var(--node-border);
+}
+
+.react-flow__controls {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--node-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.react-flow__controls-button {
+  background: var(--node-surface) !important;
+  border-bottom: 1px solid var(--node-border) !important;
+  fill: #e0e0e0 !important;
+  transition: background 0.15s ease;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--node-bg) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--node-bg);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--node-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4d4d6c;
+}
+
+/* Wallet Adapter Styles Override */
+.wallet-adapter-button {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: var(--node-surface) !important;
+}
+
+/* Custom Animations */
+@keyframes nodeGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 212, 170, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+  }
+}
+
+.node-executing {
+  animation: nodeGlow 1.5s ease-in-out infinite;
+}
+
+/* Panel Styles */
+.panel {
+  background: var(--node-surface);
+  border: 1px solid var(--node-border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+}
+
+.panel-header {
+  border-bottom: 1px solid var(--node-border);
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #8a8a9a;
+}
+
+/* Input Styles */
+input, textarea, select {
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+/* Button Base */
+.btn {
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: #0f0f1a;
+}
+
+.btn-primary:hover {
+  background: #00e6b8;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--node-border);
+  color: #e0e0e0;
+}
+
+.btn-secondary:hover {
+  background: #4d4d6c;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: var(--node-bg);
+  border: 1px solid var(--node-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #e0e0e0;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
