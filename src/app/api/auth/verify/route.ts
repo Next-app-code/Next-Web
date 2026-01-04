@@ -3,7 +3,11 @@ import { verifySignature } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { sign as jwtSign } from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-DO-NOT-USE-IN-PRODUCTION';
+
+if (!process.env.NEXTAUTH_SECRET) {
+  console.warn('WARNING: NEXTAUTH_SECRET is not set. Using fallback secret.');
+}
 
 /**
  * POST /api/auth/verify

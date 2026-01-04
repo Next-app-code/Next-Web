@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verify as jwtVerify } from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'fallback-secret-DO-NOT-USE-IN-PRODUCTION';
 
 export interface AuthenticatedRequest extends NextRequest {
   userId?: string;
