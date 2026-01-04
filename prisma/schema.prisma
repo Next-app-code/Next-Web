@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User model - Solana wallet based authentication
+model User {
+  id            String      @id @default(cuid())
+  walletAddress String      @unique
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  workspaces    Workspace[]
+
+  @@index([walletAddress])
+}
+
+// Workspace model - stores node-based workflows
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  
+  // Node and edge data stored as JSON
+  nodes       Json     @default("[]")
+  edges       Json     @default("[]")
+  
+  // RPC configuration
+  rpcEndpoint String   @default("")
+  
+  // Ownership
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Metadata
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
