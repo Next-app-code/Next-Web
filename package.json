@@ -45,5 +45,10 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.3.0"
+  },
+  "overrides": {
+    "@ledgerhq/devices": "npm:empty-module@^1.0.0",
+    "@ledgerhq/hw-transport": "npm:empty-module@^1.0.0",
+    "@ledgerhq/hw-transport-node-hid": "npm:empty-module@^1.0.0"
   }
 }
