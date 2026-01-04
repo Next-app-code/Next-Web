@@ -11,6 +11,7 @@ import {
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomNode, CustomEdge, Workspace, NodeCategory } from '@/types/nodes';
+import { workspaceAPI, authAPI } from '@/lib/api';
 
 interface WorkspaceState {
   // Current workspace
@@ -51,13 +52,14 @@ interface WorkspaceState {
   setRpcEndpoint: (endpoint: string) => void;
   
   // Workspace management
-  createWorkspace: (name: string) => void;
-  saveWorkspace: () => void;
-  loadWorkspace: (workspaceId: string) => void;
-  deleteWorkspace: (workspaceId: string) => void;
+  createWorkspace: (name: string) => Promise<void>;
+  saveWorkspace: () => Promise<void>;
+  loadWorkspace: (workspaceId: string) => Promise<void>;
+  deleteWorkspace: (workspaceId: string) => Promise<void>;
+  loadAllWorkspaces: () => Promise<void>;
   renameWorkspace: (name: string) => void;
-  exportWorkspace: () => string;
-  importWorkspace: (json: string) => boolean;
+  exportWorkspace: () => Promise<void>;
+  importWorkspace: (json: string) => Promise<boolean>;
   
   // UI actions
   togglePropertiesPanel: () => void;
@@ -172,91 +174,238 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       setRpcEndpoint: (endpoint) => set({ rpcEndpoint: endpoint }),
 
       // Workspace management
-      createWorkspace: (name) => {
-        const newWorkspace: Workspace = {
-          id: uuidv4(),
-          name,
-          nodes: [],
-          edges: [],
-          rpcEndpoint: '',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        set({
-          workspaceId: newWorkspace.id,
-          workspaceName: name,
-          nodes: [],
-          edges: [],
-          rpcEndpoint: '',
-          selectedNodeId: null,
-        });
-      },
-
-      saveWorkspace: () => {
-        const state = get();
-        const workspace: Workspace = {
-          id: state.workspaceId,
-          name: state.workspaceName,
-          nodes: state.nodes,
-          edges: state.edges,
-          rpcEndpoint: state.rpcEndpoint,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        
-        const existingIndex = state.savedWorkspaces.findIndex(
-          (w) => w.id === workspace.id
-        );
-        
-        if (existingIndex >= 0) {
-          const updated = [...state.savedWorkspaces];
-          updated[existingIndex] = workspace;
-          set({ savedWorkspaces: updated });
-        } else {
-          set({ savedWorkspaces: [...state.savedWorkspaces, workspace] });
+      createWorkspace: async (name) => {
+        if (!authAPI.isAuthenticated()) {
+          // Fallback to local-only mode
+          const newWorkspace: Workspace = {
+            id: uuidv4(),
+            name,
+            nodes: [],
+            edges: [],
+            rpcEndpoint: '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          set({
+            workspaceId: newWorkspace.id,
+            workspaceName: name,
+            nodes: [],
+            edges: [],
+            rpcEndpoint: '',
+            selectedNodeId: null,
+          });
+          return;
         }
-      },
 
-      loadWorkspace: (workspaceId) => {
-        const workspace = get().savedWorkspaces.find((w) => w.id === workspaceId);
-        if (workspace) {
+        try {
+          const workspace = await workspaceAPI.create({
+            name,
+            nodes: [],
+            edges: [],
+            rpcEndpoint: '',
+          });
+          
           set({
             workspaceId: workspace.id,
             workspaceName: workspace.name,
-            nodes: workspace.nodes,
-            edges: workspace.edges,
+            nodes: workspace.nodes as CustomNode[],
+            edges: workspace.edges as CustomEdge[],
             rpcEndpoint: workspace.rpcEndpoint,
             selectedNodeId: null,
           });
+
+          // Reload workspace list
+          await get().loadAllWorkspaces();
+        } catch (error) {
+          console.error('Failed to create workspace:', error);
+          throw error;
         }
       },
 
-      deleteWorkspace: (workspaceId) => {
-        set({
-          savedWorkspaces: get().savedWorkspaces.filter((w) => w.id !== workspaceId),
-        });
+      saveWorkspace: async () => {
+        const state = get();
+
+        if (!authAPI.isAuthenticated()) {
+          // Fallback to localStorage
+          const workspace: Workspace = {
+            id: state.workspaceId,
+            name: state.workspaceName,
+            nodes: state.nodes,
+            edges: state.edges,
+            rpcEndpoint: state.rpcEndpoint,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          
+          const existingIndex = state.savedWorkspaces.findIndex(
+            (w) => w.id === workspace.id
+          );
+          
+          if (existingIndex >= 0) {
+            const updated = [...state.savedWorkspaces];
+            updated[existingIndex] = workspace;
+            set({ savedWorkspaces: updated });
+          } else {
+            set({ savedWorkspaces: [...state.savedWorkspaces, workspace] });
+          }
+          return;
+        }
+
+        try {
+          // Check if workspace exists in backend
+          const existing = state.savedWorkspaces.find((w) => w.id === state.workspaceId);
+          
+          if (existing) {
+            // Update existing workspace
+            await workspaceAPI.update(state.workspaceId, {
+              name: state.workspaceName,
+              nodes: state.nodes,
+              edges: state.edges,
+              rpcEndpoint: state.rpcEndpoint,
+            });
+          } else {
+            // Create new workspace
+            await workspaceAPI.create({
+              name: state.workspaceName,
+              nodes: state.nodes,
+              edges: state.edges,
+              rpcEndpoint: state.rpcEndpoint,
+            });
+          }
+
+          // Reload workspace list
+          await get().loadAllWorkspaces();
+        } catch (error) {
+          console.error('Failed to save workspace:', error);
+          throw error;
+        }
+      },
+
+      loadWorkspace: async (workspaceId) => {
+        if (!authAPI.isAuthenticated()) {
+          // Fallback to localStorage
+          const workspace = get().savedWorkspaces.find((w) => w.id === workspaceId);
+          if (workspace) {
+            set({
+              workspaceId: workspace.id,
+              workspaceName: workspace.name,
+              nodes: workspace.nodes,
+              edges: workspace.edges,
+              rpcEndpoint: workspace.rpcEndpoint,
+              selectedNodeId: null,
+            });
+          }
+          return;
+        }
+
+        try {
+          const workspace = await workspaceAPI.get(workspaceId);
+          set({
+            workspaceId: workspace.id,
+            workspaceName: workspace.name,
+            nodes: workspace.nodes as CustomNode[],
+            edges: workspace.edges as CustomEdge[],
+            rpcEndpoint: workspace.rpcEndpoint,
+            selectedNodeId: null,
+          });
+        } catch (error) {
+          console.error('Failed to load workspace:', error);
+          throw error;
+        }
+      },
+
+      loadAllWorkspaces: async () => {
+        if (!authAPI.isAuthenticated()) {
+          return;
+        }
+
+        try {
+          const response = await workspaceAPI.list();
+          const workspaces: Workspace[] = response.workspaces.map((w) => ({
+            id: w.id,
+            name: w.name,
+            description: w.description,
+            nodes: [],
+            edges: [],
+            rpcEndpoint: w.rpcEndpoint,
+            createdAt: w.createdAt,
+            updatedAt: w.updatedAt,
+          }));
+          
+          set({ savedWorkspaces: workspaces });
+        } catch (error) {
+          console.error('Failed to load workspaces:', error);
+        }
+      },
+
+      deleteWorkspace: async (workspaceId) => {
+        if (!authAPI.isAuthenticated()) {
+          // Fallback to localStorage
+          set({
+            savedWorkspaces: get().savedWorkspaces.filter((w) => w.id !== workspaceId),
+          });
+          return;
+        }
+
+        try {
+          await workspaceAPI.delete(workspaceId);
+          await get().loadAllWorkspaces();
+        } catch (error) {
+          console.error('Failed to delete workspace:', error);
+          throw error;
+        }
       },
 
       renameWorkspace: (name) => set({ workspaceName: name }),
 
-      exportWorkspace: () => {
+      exportWorkspace: async () => {
         const state = get();
-        const workspace: Workspace = {
-          id: state.workspaceId,
-          name: state.workspaceName,
-          nodes: state.nodes,
-          edges: state.edges,
-          rpcEndpoint: state.rpcEndpoint,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        return JSON.stringify(workspace, null, 2);
+        
+        if (!authAPI.isAuthenticated()) {
+          // Fallback to local export
+          const workspace: Workspace = {
+            id: state.workspaceId,
+            name: state.workspaceName,
+            nodes: state.nodes,
+            edges: state.edges,
+            rpcEndpoint: state.rpcEndpoint,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          const json = JSON.stringify(workspace, null, 2);
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${state.workspaceName.replace(/\s+/g, '_')}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          return;
+        }
+
+        try {
+          const blob = await workspaceAPI.export(state.workspaceId);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${state.workspaceName.replace(/\s+/g, '_')}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('Failed to export workspace:', error);
+          throw error;
+        }
       },
 
-      importWorkspace: (json) => {
+      importWorkspace: async (json) => {
         try {
           const workspace = JSON.parse(json) as Workspace;
-          if (workspace.nodes && workspace.edges) {
+          if (!workspace.nodes || !workspace.edges) {
+            return false;
+          }
+
+          if (!authAPI.isAuthenticated()) {
+            // Fallback to local import
             set({
               workspaceId: uuidv4(),
               workspaceName: workspace.name || 'Imported Workspace',
@@ -267,8 +416,28 @@ export const useWorkspaceStore = create<WorkspaceState>()(
             });
             return true;
           }
-          return false;
-        } catch {
+
+          const imported = await workspaceAPI.import({
+            name: workspace.name,
+            description: workspace.description,
+            nodes: workspace.nodes,
+            edges: workspace.edges,
+            rpcEndpoint: workspace.rpcEndpoint,
+          });
+
+          set({
+            workspaceId: imported.workspace.id,
+            workspaceName: imported.workspace.name,
+            nodes: imported.workspace.nodes as CustomNode[],
+            edges: imported.workspace.edges as CustomEdge[],
+            rpcEndpoint: imported.workspace.rpcEndpoint,
+            selectedNodeId: null,
+          });
+
+          await get().loadAllWorkspaces();
+          return true;
+        } catch (error) {
+          console.error('Failed to import workspace:', error);
           return false;
         }
       },

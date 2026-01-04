@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useState, useRef, useEffect } from 'react';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
+import { AuthButton } from './AuthButton';
+import { useAuth } from '@/hooks/useAuth';
 
 export function Toolbar() {
-  const { publicKey } = useWallet();
+  const { isAuthenticated } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [workspaceName, setWorkspaceName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   
   const {
     workspaceName: currentWorkspaceName,
@@ -21,7 +22,7 @@ export function Toolbar() {
     loadWorkspace,
     deleteWorkspace,
     createWorkspace,
-    renameWorkspace,
+    loadAllWorkspaces,
     exportWorkspace,
     importWorkspace,
     toggleSidebar,
@@ -32,37 +33,80 @@ export function Toolbar() {
     clearResults,
   } = useWorkspaceStore();
 
-  const handleExport = () => {
-    const json = exportWorkspace();
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${currentWorkspaceName.replace(/\s+/g, '_')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  // Load workspaces when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadAllWorkspaces();
+    }
+  }, [isAuthenticated, loadAllWorkspaces]);
+
+  const handleExport = async () => {
+    try {
+      await exportWorkspace();
+    } catch (error) {
+      alert('Failed to export workspace. Please try again.');
+    }
   };
 
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const json = e.target?.result as string;
-        const success = importWorkspace(json);
-        if (!success) {
-          alert('Failed to import workspace. Invalid file format.');
+        try {
+          const success = await importWorkspace(json);
+          if (!success) {
+            alert('Failed to import workspace. Invalid file format.');
+          }
+        } catch (error) {
+          alert('Failed to import workspace. Please try again.');
         }
       };
       reader.readAsText(file);
     }
   };
 
-  const handleNewWorkspace = () => {
+  const handleNewWorkspace = async () => {
     if (workspaceName.trim()) {
-      createWorkspace(workspaceName.trim());
-      setWorkspaceName('');
-      setShowSaveDialog(false);
+      try {
+        await createWorkspace(workspaceName.trim());
+        setWorkspaceName('');
+        setShowSaveDialog(false);
+      } catch (error) {
+        alert('Failed to create workspace. Please try again.');
+      }
+    }
+  };
+
+  const handleSaveWorkspace = async () => {
+    setIsSaving(true);
+    try {
+      await saveWorkspace();
+    } catch (error) {
+      alert('Failed to save workspace. Please try again.');
+    } finally {
+      setIsSaving(false);
+      setShowWorkspaceMenu(false);
+    }
+  };
+
+  const handleLoadWorkspace = async (id: string) => {
+    try {
+      await loadWorkspace(id);
+      setShowWorkspaceMenu(false);
+    } catch (error) {
+      alert('Failed to load workspace. Please try again.');
+    }
+  };
+
+  const handleDeleteWorkspace = async (id: string) => {
+    if (confirm('Are you sure you want to delete this workspace?')) {
+      try {
+        await deleteWorkspace(id);
+      } catch (error) {
+        alert('Failed to delete workspace. Please try again.');
+      }
     }
   };
 
@@ -119,10 +163,12 @@ export function Toolbar() {
                   New Workspace
                 </button>
                 <button
-                  onClick={() => { saveWorkspace(); setShowWorkspaceMenu(false); }}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-node-border rounded-md transition-colors"
+                  onClick={handleSaveWorkspace}
+                  disabled={isSaving || !isAuthenticated}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-node-border rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Save Current
+                  {isSaving ? 'Saving...' : 'Save Current'}
+                  {!isAuthenticated && ' (Sign in required)'}
                 </button>
               </div>
               
@@ -135,13 +181,16 @@ export function Toolbar() {
                       className="flex items-center justify-between px-3 py-2 hover:bg-node-border rounded-md group"
                     >
                       <button
-                        onClick={() => { loadWorkspace(workspace.id); setShowWorkspaceMenu(false); }}
+                        onClick={() => handleLoadWorkspace(workspace.id)}
                         className="text-sm text-gray-300 truncate flex-1 text-left"
                       >
                         {workspace.name}
                       </button>
                       <button
-                        onClick={() => deleteWorkspace(workspace.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteWorkspace(workspace.id);
+                        }}
                         className="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-red-400 transition-all"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -229,7 +278,7 @@ export function Toolbar() {
           </svg>
         </button>
 
-        <WalletMultiButton className="!bg-node-bg !border !border-node-border !rounded-md !h-9 !text-sm !font-medium !tracking-tight hover:!border-gray-500" />
+        <AuthButton />
       </div>
 
       {/* Save Dialog */}
