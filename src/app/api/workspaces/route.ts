@@ -20,30 +20,31 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         description: true,
+        nodes: true,
+        edges: true,
         rpcEndpoint: true,
         isPublic: true,
         createdAt: true,
         updatedAt: true,
-        // Don't send full nodes/edges in list view
-        _count: {
-          select: {
-            nodes: true,
-            edges: true,
-          },
-        },
       },
       orderBy: { updatedAt: 'desc' },
     });
 
-    // Transform the response to include node/edge counts
+    // Transform the response to include node/edge counts but not the full data
     const transformedWorkspaces = workspaces.map((ws) => {
-      const nodes = ws._count?.nodes || (Array.isArray((ws as any).nodes) ? (ws as any).nodes.length : 0);
-      const edges = ws._count?.edges || (Array.isArray((ws as any).edges) ? (ws as any).edges.length : 0);
+      const nodes = Array.isArray(ws.nodes) ? ws.nodes : [];
+      const edges = Array.isArray(ws.edges) ? ws.edges : [];
       
       return {
-        ...ws,
-        nodeCount: nodes,
-        edgeCount: edges,
+        id: ws.id,
+        name: ws.name,
+        description: ws.description,
+        rpcEndpoint: ws.rpcEndpoint,
+        isPublic: ws.isPublic,
+        createdAt: ws.createdAt,
+        updatedAt: ws.updatedAt,
+        nodeCount: nodes.length,
+        edgeCount: edges.length,
       };
     });
 
