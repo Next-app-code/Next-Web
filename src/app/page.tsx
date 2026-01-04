@@ -4,10 +4,15 @@ import { NodeEditor } from '@/components/NodeEditor';
 import { Sidebar } from '@/components/Sidebar';
 import { Toolbar } from '@/components/Toolbar';
 import { PropertiesPanel } from '@/components/PropertiesPanel';
+import { KeyboardShortcutsHelp } from '@/components/KeyboardShortcutsHelp';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function Home() {
   const { isPropertiesPanelOpen } = useWorkspaceStore();
+  
+  // Enable keyboard shortcuts
+  useKeyboardShortcuts();
 
   return (
     <main className="h-screen w-screen flex flex-col bg-canvas-bg overflow-hidden">
@@ -19,6 +24,7 @@ export default function Home() {
         </div>
         {isPropertiesPanelOpen && <PropertiesPanel />}
       </div>
+      <KeyboardShortcutsHelp />
     </main>
   );
 }
