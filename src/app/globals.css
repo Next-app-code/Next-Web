@@ -5,13 +5,13 @@
 @tailwind utilities;
 
 :root {
-  --node-bg: #1a1a2e;
-  --node-surface: #232340;
-  --node-border: #3d3d5c;
-  --canvas-bg: #0f0f1a;
-  --canvas-grid: #1a1a2e;
-  --accent-primary: #00d4aa;
-  --accent-secondary: #4ecdc4;
+  --node-bg: #1a1a1a;
+  --node-surface: #2a2a2a;
+  --node-border: #404040;
+  --canvas-bg: #0a0a0a;
+  --canvas-grid: #1a1a1a;
+  --accent-primary: #ffffff;
+  --accent-secondary: #e5e5e5;
 }
 
 * {
@@ -23,7 +23,7 @@
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background: var(--canvas-bg);
-  color: #e0e0e0;
+  color: #e5e5e5;
   letter-spacing: -0.02em;
   overflow: hidden;
 }
@@ -91,7 +91,7 @@ body {
 .react-flow__controls-button {
   background: var(--node-surface) !important;
   border-bottom: 1px solid var(--node-border) !important;
-  fill: #e0e0e0 !important;
+  fill: #e5e5e5 !important;
   transition: background 0.15s ease;
 }
 
@@ -116,7 +116,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4d4d6c;
+  background: #555555;
 }
 
 /* Wallet Adapter Styles Override */
@@ -132,10 +132,10 @@ body {
 /* Custom Animations */
 @keyframes nodeGlow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(0, 212, 170, 0.3);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
   }
   50% {
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -158,7 +158,7 @@ body {
   font-size: 13px;
   letter-spacing: -0.01em;
   text-transform: uppercase;
-  color: #8a8a9a;
+  color: #999999;
 }
 
 /* Input Styles */
@@ -186,21 +186,21 @@ input:focus, textarea:focus, select:focus {
 
 .btn-primary {
   background: var(--accent-primary);
-  color: #0f0f1a;
+  color: #0a0a0a;
 }
 
 .btn-primary:hover {
-  background: #00e6b8;
+  background: #f5f5f5;
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: var(--node-border);
-  color: #e0e0e0;
+  color: #e5e5e5;
 }
 
 .btn-secondary:hover {
-  background: #4d4d6c;
+  background: #505050;
 }
 
 /* Tooltip */
@@ -211,7 +211,7 @@ input:focus, textarea:focus, select:focus {
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 12px;
-  color: #e0e0e0;
+  color: #e5e5e5;
   z-index: 1000;
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
