@@ -161,7 +161,7 @@ export function Toolbar() {
 
         {/* Twitter */}
         <a
-          href="https://twitter.com"
+          href="https://x.com/NextWorkspace"
           target="_blank"
           rel="noopener noreferrer"
           className="p-2 rounded-md hover:bg-node-border transition-colors"
