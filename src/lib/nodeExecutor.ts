@@ -211,7 +211,7 @@ export async function executeNode(
           { programId: TOKEN_PROGRAM_ID }
         );
         
-        const accounts = tokenAccounts.value.map(account => ({
+        const accounts = tokenAccounts.value.map((account: any) => ({
           address: account.pubkey.toBase58(),
           mint: account.account.data.parsed?.info?.mint,
           amount: account.account.data.parsed?.info?.tokenAmount?.uiAmount,
