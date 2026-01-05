@@ -46,8 +46,8 @@ body {
 }
 
 .react-flow__handle {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 2px solid var(--node-border);
   background: var(--node-surface);
@@ -55,15 +55,17 @@ body {
 }
 
 .react-flow__handle:hover {
-  transform: scale(1.2);
+  background: var(--node-accent);
+  border-color: var(--node-accent);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 .react-flow__handle-left {
-  left: -6px;
+  left: -7px;
 }
 
 .react-flow__handle-right {
-  right: -6px;
+  right: -7px;
 }
 
 .react-flow__node {
