@@ -7,7 +7,7 @@ import { NodeCategory } from '@/types/nodes';
 
 export function Sidebar() {
   const { isSidebarCollapsed, searchQuery, setSearchQuery, activeCategory, setActiveCategory } = useWorkspaceStore();
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['rpc', 'wallet']));
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['rpc', 'wallet', 'utility', 'input', 'output']));
 
   const filteredNodes = useMemo(() => {
     let nodes = nodeDefinitions;
@@ -99,7 +99,7 @@ export function Sidebar() {
             className={`
               px-2 py-1 text-xs rounded-md transition-all
               ${activeCategory === 'all' 
-                ? 'bg-node-accent text-node-bg font-medium' 
+                ? 'bg-white text-black font-medium' 
                 : 'bg-node-bg text-gray-400 hover:bg-node-border'
               }
             `}
@@ -118,8 +118,8 @@ export function Sidebar() {
                 }
               `}
               style={{
-                background: activeCategory === key ? info.color : info.color + '30',
-                color: activeCategory === key ? '#0f0f1a' : info.color,
+                background: activeCategory === key ? '#ffffff' : info.color + '30',
+                color: activeCategory === key ? '#000000' : info.color,
               }}
             >
               {info.label}
