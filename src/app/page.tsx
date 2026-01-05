@@ -11,18 +11,10 @@ import { useNodeExecution } from '@/hooks/useNodeExecution';
 import { useEffect } from 'react';
 
 export default function Home() {
-  const { isPropertiesPanelOpen, isExecuting } = useWorkspaceStore();
-  const { executeWorkflow } = useNodeExecution();
+  const { isPropertiesPanelOpen } = useWorkspaceStore();
   
   // Enable keyboard shortcuts
   useKeyboardShortcuts();
-
-  // Execute workflow when execution starts
-  useEffect(() => {
-    if (isExecuting) {
-      executeWorkflow();
-    }
-  }, [isExecuting, executeWorkflow]);
 
   return (
     <main className="h-screen w-screen flex flex-col bg-canvas-bg overflow-hidden">

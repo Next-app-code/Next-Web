@@ -5,9 +5,11 @@ import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { AuthButton } from './AuthButton';
 import { useAuth } from '@/hooks/useAuth';
 import { HowItWorksModal } from './HowItWorksModal';
+import { useNodeExecution } from '@/hooks/useNodeExecution';
 
 export function Toolbar() {
   const { isAuthenticated } = useAuth();
+  const { executeWorkflow } = useNodeExecution();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -112,11 +114,11 @@ export function Toolbar() {
     }
   };
 
-  const handleRun = () => {
+  const handleRun = async () => {
     if (isExecuting) {
       stopExecution();
     } else {
-      startExecution();
+      await executeWorkflow();
     }
   };
 
