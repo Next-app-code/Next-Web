@@ -135,7 +135,6 @@ export function Toolbar() {
         <div className="flex items-center gap-2">
           <img src="/minilogo.png" alt="Next Logo" className="w-6 h-6" />
           <h1 className="text-lg font-bold text-white tracking-tighter">NEXT</h1>
-          <span className="text-xs text-gray-500 tracking-tight">Solana Visual Builder</span>
         </div>
 
         <div className="h-6 w-px bg-node-border" />
