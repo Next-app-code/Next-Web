@@ -141,6 +141,77 @@ export function Toolbar() {
 
         <div className="h-6 w-px bg-node-border" />
 
+        {/* How it works */}
+        <button
+          onClick={() => setShowHowItWorks(true)}
+          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight"
+        >
+          How it works
+        </button>
+
+        {/* $NEXT Token */}
+        <a
+          href="https://twitter.com/search?q=%24NEXT"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight font-mono"
+        >
+          $NEXT
+        </a>
+
+        {/* Twitter */}
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 rounded-md hover:bg-node-border transition-colors"
+          title="Twitter"
+        >
+          <svg className="w-5 h-5 text-gray-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+
+      {/* Center Section - RPC Endpoint */}
+      <div className="flex items-center gap-3">
+        <label className="text-xs text-gray-500 tracking-tight">RPC</label>
+        <input
+          type="text"
+          placeholder="Enter Solana RPC endpoint..."
+          value={rpcEndpoint}
+          onChange={(e) => setRpcEndpoint(e.target.value)}
+          className="w-80 px-3 py-1.5 bg-node-bg border border-node-border rounded-md text-sm text-gray-300 placeholder-gray-600 focus:border-node-accent transition-colors tracking-tight"
+        />
+        <div className={`w-2 h-2 rounded-full ${rpcEndpoint ? 'bg-green-500' : 'bg-gray-600'}`} />
+      </div>
+
+      {/* Right Section */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={clearResults}
+          className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-300 transition-colors tracking-tight"
+        >
+          Clear
+        </button>
+        
+        <button
+          onClick={handleRun}
+          disabled={!rpcEndpoint}
+          className={`
+            px-4 py-1.5 rounded-md text-sm font-medium tracking-tight transition-all
+            ${isExecuting 
+              ? 'bg-red-500 hover:bg-red-600 text-white' 
+              : 'bg-white hover:bg-gray-200 text-black'
+            }
+            disabled:opacity-50 disabled:cursor-not-allowed
+          `}
+        >
+          {isExecuting ? 'Stop' : 'Run'}
+        </button>
+
+        <div className="h-6 w-px bg-node-border" />
+
         {/* Workspace Dropdown */}
         <div className="relative">
           <button
@@ -279,39 +350,6 @@ export function Toolbar() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
           </svg>
         </button>
-
-        <div className="h-6 w-px bg-node-border" />
-
-        {/* How it works */}
-        <button
-          onClick={() => setShowHowItWorks(true)}
-          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight"
-        >
-          How it works
-        </button>
-
-        {/* $NEXT Token */}
-        <a
-          href="https://twitter.com/search?q=%24NEXT"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight font-mono"
-        >
-          $NEXT
-        </a>
-
-        {/* Twitter */}
-        <a
-          href="https://twitter.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p-2 rounded-md hover:bg-node-border transition-colors"
-          title="Twitter"
-        >
-          <svg className="w-5 h-5 text-gray-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-        </a>
 
         <div className="h-6 w-px bg-node-border" />
 
