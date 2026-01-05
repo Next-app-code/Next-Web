@@ -105,16 +105,17 @@ function NodeEditorInner() {
         onNodeClick={handleNodeClick}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
+        connectionMode="loose"
         fitView
         snapToGrid
         snapGrid={[16, 16]}
         defaultEdgeOptions={{
           type: 'smoothstep',
-          style: { stroke: '#4ecdc4', strokeWidth: 2 },
+          style: { stroke: '#ffffff', strokeWidth: 2 },
         }}
         proOptions={{ hideAttribution: true }}
       >
-        <Background color="#1a1a2e" gap={16} size={1} />
+        <Background color="#1a1a1a" gap={16} size={1} />
         <Controls 
           showZoom={true}
           showFitView={true}
@@ -122,9 +123,9 @@ function NodeEditorInner() {
         />
         <MiniMap 
           nodeColor={minimapNodeColor}
-          maskColor="rgba(15, 15, 26, 0.8)"
+          maskColor="rgba(10, 10, 10, 0.8)"
           style={{
-            backgroundColor: '#232340',
+            backgroundColor: '#2a2a2a',
           }}
         />
       </ReactFlow>
