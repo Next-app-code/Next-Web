@@ -300,45 +300,7 @@ export function Toolbar() {
           onChange={handleImport}
           className="hidden"
         />
-      </div>
-
-      {/* Center Section - RPC Endpoint */}
-      <div className="flex items-center gap-3">
-        <label className="text-xs text-gray-500 tracking-tight">RPC</label>
-        <input
-          type="text"
-          placeholder="Enter Solana RPC endpoint..."
-          value={rpcEndpoint}
-          onChange={(e) => setRpcEndpoint(e.target.value)}
-          className="w-80 px-3 py-1.5 bg-node-bg border border-node-border rounded-md text-sm text-gray-300 placeholder-gray-600 focus:border-node-accent transition-colors tracking-tight"
-        />
-        <div className={`w-2 h-2 rounded-full ${rpcEndpoint ? 'bg-green-500' : 'bg-gray-600'}`} />
-      </div>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={clearResults}
-          className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-300 transition-colors tracking-tight"
-        >
-          Clear
-        </button>
         
-        <button
-          onClick={handleRun}
-          disabled={!rpcEndpoint}
-          className={`
-            px-4 py-1.5 rounded-md text-sm font-medium tracking-tight transition-all
-            ${isExecuting 
-              ? 'bg-red-500 hover:bg-red-600 text-white' 
-              : 'bg-node-accent hover:bg-[#00e6b8] text-node-bg'
-            }
-            disabled:opacity-50 disabled:cursor-not-allowed
-          `}
-        >
-          {isExecuting ? 'Stop' : 'Run'}
-        </button>
-
         <div className="h-6 w-px bg-node-border" />
 
         <button
