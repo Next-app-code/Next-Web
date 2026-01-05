@@ -36,19 +36,22 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
       {/* Body */}
       <div className="p-2 space-y-1">
         {/* Inputs */}
-        {inputs.map((input, index) => (
-          <div key={input.id} className="relative flex items-center py-1">
+        {inputs.map((input) => (
+          <div key={input.id} className="relative flex items-center py-1.5">
             <Handle
               type="target"
               position={Position.Left}
               id={input.id}
-              className="!w-3 !h-3 !border-2"
+              className="!w-3 !h-3 !border-2 !left-[-13px]"
               style={{
                 background: '#1a1a1a',
                 borderColor: '#e5e5e5',
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
               }}
             />
-            <span className="text-xs text-gray-300 ml-2 tracking-tight">
+            <span className="text-xs text-gray-300 ml-1 tracking-tight">
               {input.name}
               {input.required && <span className="text-gray-500 ml-0.5">*</span>}
             </span>
@@ -56,19 +59,22 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
         ))}
 
         {/* Outputs */}
-        {outputs.map((output, index) => (
-          <div key={output.id} className="relative flex items-center justify-end py-1">
-            <span className="text-xs text-gray-300 mr-2 tracking-tight">
+        {outputs.map((output) => (
+          <div key={output.id} className="relative flex items-center justify-end py-1.5">
+            <span className="text-xs text-gray-300 mr-1 tracking-tight">
               {output.name}
             </span>
             <Handle
               type="source"
               position={Position.Right}
               id={output.id}
-              className="!w-3 !h-3 !border-2"
+              className="!w-3 !h-3 !border-2 !right-[-13px]"
               style={{
                 background: '#1a1a1a',
                 borderColor: '#e5e5e5',
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
               }}
             />
           </div>
