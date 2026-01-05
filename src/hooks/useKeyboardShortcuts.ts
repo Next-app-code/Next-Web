@@ -38,7 +38,6 @@ export function useKeyboardShortcuts() {
       if (modifier && e.key === 'z' && !e.shiftKey) {
         e.preventDefault();
         // Undo functionality (to be implemented)
-        console.log('Undo');
         return;
       }
 
@@ -46,7 +45,6 @@ export function useKeyboardShortcuts() {
       if ((modifier && e.shiftKey && e.key === 'z') || (modifier && e.key === 'y')) {
         e.preventDefault();
         // Redo functionality (to be implemented)
-        console.log('Redo');
         return;
       }
 
@@ -56,7 +54,6 @@ export function useKeyboardShortcuts() {
         const selectedNode = nodes.find(n => n.id === selectedNodeId);
         if (selectedNode) {
           localStorage.setItem('copiedNode', JSON.stringify(selectedNode));
-          console.log('Node copied');
         }
         return;
       }
@@ -78,7 +75,6 @@ export function useKeyboardShortcuts() {
               selected: false,
             };
             setNodes([...nodes, newNode]);
-            console.log('Node pasted');
           } catch (error) {
             console.error('Failed to paste node:', error);
           }
@@ -101,7 +97,6 @@ export function useKeyboardShortcuts() {
             selected: false,
           };
           setNodes([...nodes, newNode]);
-          console.log('Node duplicated');
         }
         return;
       }
@@ -111,7 +106,6 @@ export function useKeyboardShortcuts() {
         e.preventDefault();
         const updatedNodes = nodes.map(node => ({ ...node, selected: true }));
         setNodes(updatedNodes);
-        console.log('All nodes selected');
         return;
       }
 
@@ -121,7 +115,6 @@ export function useKeyboardShortcuts() {
         const updatedNodes = nodes.map(node => ({ ...node, selected: false }));
         setNodes(updatedNodes);
         useWorkspaceStore.getState().selectNode(null);
-        console.log('Deselected');
         return;
       }
     };

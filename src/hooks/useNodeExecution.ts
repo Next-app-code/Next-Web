@@ -57,10 +57,6 @@ export function useNodeExecution() {
   }, [rpcEndpoint]);
 
   const buildExecutionOrder = useCallback(() => {
-    console.log('Building execution order...');
-    console.log('Nodes:', nodes.map(n => ({ id: n.id, type: n.data.type })));
-    console.log('Edges:', edges.map(e => ({ source: e.source, target: e.target })));
-    
     const graph = new Map<string, string[]>();
     const inDegree = new Map<string, number>();
     
@@ -79,8 +75,6 @@ export function useNodeExecution() {
       inDegree.set(edge.target, (inDegree.get(edge.target) || 0) + 1);
     }
     
-    console.log('In-degrees:', Array.from(inDegree.entries()));
-    
     // Topological sort
     const queue: string[] = [];
     const result: string[] = [];
@@ -90,8 +84,6 @@ export function useNodeExecution() {
         queue.push(nodeId);
       }
     }
-    
-    console.log('Starting nodes (degree 0):', queue);
     
     while (queue.length > 0) {
       const nodeId = queue.shift()!;
@@ -108,12 +100,8 @@ export function useNodeExecution() {
       }
     }
     
-    console.log('Execution order:', result);
-    console.log('Total nodes:', nodes.length, 'Ordered:', result.length);
-    
     if (result.length !== nodes.length) {
       const missing = nodes.filter(n => !result.includes(n.id));
-      console.error('Missing nodes from execution order:', missing.map(n => ({ id: n.id, type: n.data.type })));
       throw new Error(`Workflow contains cycles or disconnected nodes. ${missing.length} nodes could not be ordered.`);
     }
     

@@ -485,20 +485,13 @@ export function getNodeInputValues(
         const outputId = edge.sourceHandle;
         const inputId = edge.targetHandle;
         
-        console.log(`Edge mapping: ${edge.source}[${outputId}] → ${node.id}[${inputId}]`);
-        console.log(`Source result:`, sourceResult);
-        
         if (outputId && sourceResult[outputId] !== undefined) {
           inputValues[inputId] = sourceResult[outputId];
-          console.log(`Mapped value:`, sourceResult[outputId]);
         } else {
-          // If no specific handle, try to use the whole result or first value
-          console.warn(`No value found for output handle: ${outputId}`);
           // Fallback: use first available value from source result
           const firstValue = Object.values(sourceResult)[0];
           if (firstValue !== undefined) {
             inputValues[inputId] = firstValue;
-            console.log(`Using first value as fallback:`, firstValue);
           }
         }
       }
@@ -509,8 +502,6 @@ export function getNodeInputValues(
   if (node.data.values) {
     Object.assign(inputValues, node.data.values);
   }
-
-  console.log(`Final input values for ${node.data.label}:`, inputValues);
 
   return inputValues;
 }

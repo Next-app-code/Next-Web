@@ -28,7 +28,7 @@ export function PropertiesPanel() {
 
   const handleValueChange = (key: string, value: unknown) => {
     updateNode(selectedNode.id, {
-      values: { ...selectedNode.data.values, [key]: value },
+      values: { ...(selectedNode.data.values || {}), [key]: value },
     });
   };
 
@@ -67,7 +67,7 @@ export function PropertiesPanel() {
                   </label>
                   {renderInputField(
                     input.dataType,
-                    selectedNode.data.values[input.id],
+                    selectedNode.data.values?.[input.id] ?? input.defaultValue,
                     (value) => handleValueChange(input.id, value)
                   )}
                 </div>
@@ -157,7 +157,7 @@ function renderInputField(
           className={`
             w-full px-3 py-2 rounded-md text-sm text-left transition-colors
             ${value 
-              ? 'bg-node-accent text-node-bg' 
+              ? 'bg-white text-black' 
               : 'bg-node-bg border border-node-border text-gray-300'
             }
           `}
