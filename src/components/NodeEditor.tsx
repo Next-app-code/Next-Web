@@ -7,6 +7,7 @@ import ReactFlow, {
   MiniMap,
   ReactFlowProvider,
   useReactFlow,
+  ConnectionMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -105,7 +106,7 @@ function NodeEditorInner() {
         onNodeClick={handleNodeClick}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
-        connectionMode="loose"
+        connectionMode={ConnectionMode.Loose}
         connectionLineStyle={{ stroke: '#ffffff', strokeWidth: 2 }}
         fitView
         snapToGrid
