@@ -18,6 +18,7 @@ export interface ExecutionContext {
   connection: Connection | null;
   results: Map<string, any>;
   wallet: { publicKey: PublicKey | null; connected: boolean };
+  rpcEndpoint: string;
 }
 
 /**
@@ -34,8 +35,8 @@ export async function executeNode(
     switch (type) {
       // ===== RPC Nodes =====
       case 'rpc-connection': {
-        const endpoint = inputValues.endpoint || values?.endpoint || context.connection?.rpcEndpoint;
-        if (!endpoint) throw new Error('RPC endpoint is required');
+        const endpoint = inputValues.endpoint || values?.endpoint || context.rpcEndpoint;
+        if (!endpoint) throw new Error('RPC endpoint is required. Please enter an RPC endpoint in the toolbar.');
         
         const connection = new Connection(endpoint, 'confirmed');
         return { connection };

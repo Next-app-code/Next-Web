@@ -97,6 +97,7 @@ export function useNodeExecution() {
           publicKey: publicKey || null,
           connected: connected,
         },
+        rpcEndpoint: rpcEndpoint,
       };
 
       for (const nodeId of executionOrder) {
