@@ -8,6 +8,7 @@ import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
   ConnectionMode,
+  MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -119,7 +120,7 @@ function NodeEditorInner() {
             strokeWidth: 2.5,
           },
           markerEnd: {
-            type: 'arrowclosed',
+            type: MarkerType.ArrowClosed,
             color: '#e5e5e5',
             width: 20,
             height: 20,
