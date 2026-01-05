@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { AuthButton } from './AuthButton';
 import { useAuth } from '@/hooks/useAuth';
+import { HowItWorksModal } from './HowItWorksModal';
 
 export function Toolbar() {
   const { isAuthenticated } = useAuth();
@@ -12,6 +13,7 @@ export function Toolbar() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [workspaceName, setWorkspaceName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   
   const {
     workspaceName: currentWorkspaceName,
@@ -278,6 +280,41 @@ export function Toolbar() {
           </svg>
         </button>
 
+        <div className="h-6 w-px bg-node-border" />
+
+        {/* How it works */}
+        <button
+          onClick={() => setShowHowItWorks(true)}
+          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight"
+        >
+          How it works
+        </button>
+
+        {/* $NEXT Token */}
+        <a
+          href="https://twitter.com/search?q=%24NEXT"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight font-mono"
+        >
+          $NEXT
+        </a>
+
+        {/* Twitter */}
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 rounded-md hover:bg-node-border transition-colors"
+          title="Twitter"
+        >
+          <svg className="w-5 h-5 text-gray-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+
+        <div className="h-6 w-px bg-node-border" />
+
         <AuthButton />
       </div>
 
@@ -304,7 +341,7 @@ export function Toolbar() {
               <button
                 onClick={handleNewWorkspace}
                 disabled={!workspaceName.trim()}
-                className="px-4 py-2 bg-node-accent text-node-bg rounded-md text-sm font-medium hover:bg-[#00e6b8] transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-white text-black rounded-md text-sm font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
               >
                 Create
               </button>
@@ -312,6 +349,9 @@ export function Toolbar() {
           </div>
         </div>
       )}
+
+      {/* How It Works Modal */}
+      <HowItWorksModal isOpen={showHowItWorks} onClose={() => setShowHowItWorks(false)} />
     </header>
   );
 }
