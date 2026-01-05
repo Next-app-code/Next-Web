@@ -365,6 +365,73 @@ export async function executeNode(
         return { logged: true, value };
       }
 
+      // ===== Loop Nodes =====
+      case 'loop-for-each': {
+        const array = inputValues.array;
+        if (!Array.isArray(array)) {
+          throw new Error('Input must be an array');
+        }
+        
+        // Return the last item and all results
+        // Note: In a full implementation, this would trigger downstream nodes for each item
+        const results = array.map((item, index) => ({ item, index }));
+        return {
+          item: array[array.length - 1],
+          index: array.length - 1,
+          result: results,
+        };
+      }
+
+      case 'loop-repeat': {
+        const times = Number(inputValues.times || values?.times || 1);
+        const value = inputValues.value;
+        
+        const results = [];
+        for (let i = 0; i < times; i++) {
+          results.push(value);
+        }
+        
+        return {
+          index: times - 1,
+          results,
+        };
+      }
+
+      case 'loop-range': {
+        const start = Number(inputValues.start || values?.start || 0);
+        const end = Number(inputValues.end || values?.end || 10);
+        const step = Number(inputValues.step || values?.step || 1);
+        
+        const array = [];
+        for (let i = start; i < end; i += step) {
+          array.push(i);
+        }
+        
+        return { array };
+      }
+
+      case 'array-length': {
+        const array = inputValues.array;
+        if (!Array.isArray(array)) {
+          throw new Error('Input must be an array');
+        }
+        return { length: array.length };
+      }
+
+      case 'array-get-item': {
+        const array = inputValues.array;
+        const index = Number(inputValues.index || values?.index || 0);
+        
+        if (!Array.isArray(array)) {
+          throw new Error('Input must be an array');
+        }
+        if (index < 0 || index >= array.length) {
+          throw new Error(`Index ${index} out of bounds (array length: ${array.length})`);
+        }
+        
+        return { item: array[index] };
+      }
+
       // ===== Utility Nodes =====
       case 'utility-delay': {
         const input = inputValues.input;

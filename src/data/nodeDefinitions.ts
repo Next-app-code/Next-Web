@@ -463,6 +463,80 @@ export const nodeDefinitions: NodeDefinition[] = [
     outputs: [],
   },
 
+  // Loop Nodes
+  {
+    type: 'loop-for-each',
+    category: 'utility',
+    label: 'For Each',
+    description: 'Iterate over each item in an array',
+    color: '#6b7280',
+    inputs: [
+      { id: 'array', name: 'Array', type: 'input', dataType: 'array', required: true },
+    ],
+    outputs: [
+      { id: 'item', name: 'Current Item', type: 'output', dataType: 'any' },
+      { id: 'index', name: 'Index', type: 'output', dataType: 'number' },
+      { id: 'result', name: 'All Results', type: 'output', dataType: 'array' },
+    ],
+  },
+  {
+    type: 'loop-repeat',
+    category: 'utility',
+    label: 'Repeat',
+    description: 'Repeat execution N times',
+    color: '#6b7280',
+    inputs: [
+      { id: 'times', name: 'Times', type: 'input', dataType: 'number', required: true },
+      { id: 'value', name: 'Value', type: 'input', dataType: 'any' },
+    ],
+    outputs: [
+      { id: 'index', name: 'Current Index', type: 'output', dataType: 'number' },
+      { id: 'results', name: 'All Results', type: 'output', dataType: 'array' },
+    ],
+  },
+  {
+    type: 'loop-range',
+    category: 'utility',
+    label: 'Range',
+    description: 'Generate array of numbers from start to end',
+    color: '#6b7280',
+    inputs: [
+      { id: 'start', name: 'Start', type: 'input', dataType: 'number', required: true },
+      { id: 'end', name: 'End', type: 'input', dataType: 'number', required: true },
+      { id: 'step', name: 'Step', type: 'input', dataType: 'number', defaultValue: 1 },
+    ],
+    outputs: [
+      { id: 'array', name: 'Array', type: 'output', dataType: 'array' },
+    ],
+  },
+  {
+    type: 'array-length',
+    category: 'utility',
+    label: 'Array Length',
+    description: 'Get length of an array',
+    color: '#6b7280',
+    inputs: [
+      { id: 'array', name: 'Array', type: 'input', dataType: 'array', required: true },
+    ],
+    outputs: [
+      { id: 'length', name: 'Length', type: 'output', dataType: 'number' },
+    ],
+  },
+  {
+    type: 'array-get-item',
+    category: 'utility',
+    label: 'Get Array Item',
+    description: 'Get item at specific index',
+    color: '#6b7280',
+    inputs: [
+      { id: 'array', name: 'Array', type: 'input', dataType: 'array', required: true },
+      { id: 'index', name: 'Index', type: 'input', dataType: 'number', required: true },
+    ],
+    outputs: [
+      { id: 'item', name: 'Item', type: 'output', dataType: 'any' },
+    ],
+  },
+
   // Utility Nodes
   {
     type: 'utility-delay',
