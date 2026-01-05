@@ -532,3 +532,4 @@ export const categoryInfo: Record<string, { label: string; color: string; descri
   utility: { label: 'Utility', color: '#6b7280', description: 'Utility functions' },
 };
 
+

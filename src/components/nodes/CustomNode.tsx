@@ -120,3 +120,4 @@ function getDataTypeColor(dataType: string): string {
   return colors[dataType] || '#9ca3af';
 }
 
+
