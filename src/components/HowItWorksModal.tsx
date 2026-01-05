@@ -14,37 +14,30 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
     {
       title: '1. Connect Your Wallet',
       description: 'Click the wallet button in the header and connect your Solana wallet (Phantom, etc.)',
-      icon: '🔗',
     },
     {
       title: '2. Set RPC Endpoint',
       description: 'Enter your Solana RPC endpoint in the center input field (mainnet, devnet, or custom)',
-      icon: '🌐',
     },
     {
       title: '3. Add Nodes',
       description: 'Drag nodes from the left sidebar onto the canvas. Choose from RPC, Wallet, Transaction, and more',
-      icon: '📦',
     },
     {
       title: '4. Connect Nodes',
       description: 'Click and drag from output handles (right side) to input handles (left side) to create connections',
-      icon: '🔌',
     },
     {
       title: '5. Configure Nodes',
       description: 'Click on a node to open the properties panel and configure its parameters',
-      icon: '⚙️',
     },
     {
       title: '6. Run Workflow',
       description: 'Click the "Run" button in the header to execute your workflow',
-      icon: '▶️',
     },
     {
       title: '7. Save & Share',
       description: 'Save your workspace or export as JSON to share with others',
-      icon: '💾',
     },
   ];
 
@@ -82,19 +75,16 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
           {/* Steps */}
           <div className="space-y-4 mb-8">
             {steps.map((step, index) => (
-              <div key={index} className="flex gap-4 p-4 bg-node-bg rounded-lg border border-node-border hover:border-gray-500 transition-colors">
-                <div className="text-3xl flex-shrink-0">{step.icon}</div>
-                <div className="flex-1">
-                  <h3 className="text-white font-semibold mb-1 tracking-tight">{step.title}</h3>
-                  <p className="text-gray-400 text-sm tracking-tight">{step.description}</p>
-                </div>
+              <div key={index} className="p-4 bg-node-bg rounded-lg border border-node-border hover:border-gray-500 transition-colors">
+                <h3 className="text-white font-semibold mb-1 tracking-tight">{step.title}</h3>
+                <p className="text-gray-400 text-sm tracking-tight">{step.description}</p>
               </div>
             ))}
           </div>
 
           {/* Keyboard Shortcuts */}
           <div className="border-t border-node-border pt-6">
-            <h3 className="text-white font-semibold mb-4 tracking-tight">⌨️ Keyboard Shortcuts</h3>
+            <h3 className="text-white font-semibold mb-4 tracking-tight">Keyboard Shortcuts</h3>
             <div className="grid grid-cols-2 gap-3">
               {shortcuts.map((shortcut, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-node-bg rounded-lg border border-node-border">
@@ -109,7 +99,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
 
           {/* Tips */}
           <div className="border-t border-node-border pt-6 mt-6">
-            <h3 className="text-white font-semibold mb-3 tracking-tight">💡 Tips</h3>
+            <h3 className="text-white font-semibold mb-3 tracking-tight">Tips</h3>
             <ul className="space-y-2 text-sm text-gray-400 tracking-tight">
               <li className="flex items-start gap-2">
                 <span className="text-node-accent">•</span>
