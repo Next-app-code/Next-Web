@@ -4,6 +4,31 @@ import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { executeNode, getNodeInputValues, ExecutionContext } from '@/lib/nodeExecutor';
 
+/**
+ * Filter out non-serializable objects from results
+ */
+function filterSerializableResult(result: any): any {
+  if (!result || typeof result !== 'object') {
+    return result;
+  }
+
+  const filtered: any = {};
+  for (const [key, value] of Object.entries(result)) {
+    // Skip Connection objects and other non-serializable types
+    if (value instanceof Connection) {
+      filtered[key] = '[Connection Object]';
+    } else if (typeof value === 'function') {
+      filtered[key] = '[Function]';
+    } else if (value && typeof value === 'object' && value.constructor && value.constructor.name !== 'Object' && value.constructor.name !== 'Array') {
+      // Complex objects - convert to string representation
+      filtered[key] = `[${value.constructor.name}]`;
+    } else {
+      filtered[key] = value;
+    }
+  }
+  return filtered;
+}
+
 export function useNodeExecution() {
   const connectionRef = useRef<Connection | null>(null);
   const { publicKey, connected } = useWallet();
@@ -140,10 +165,13 @@ export function useNodeExecution() {
           results.set(nodeId, output);
           
           // Update node with result for display
+          // Filter out non-serializable objects like Connection
+          const displayResult = filterSerializableResult(output);
+          
           if (node.data.type === 'output-display') {
             setNodeResult(nodeId, inputValues.value);
           } else {
-            setNodeResult(nodeId, output);
+            setNodeResult(nodeId, displayResult);
           }
           
           // Clear executing state for this node
