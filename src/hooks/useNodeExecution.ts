@@ -1,9 +1,12 @@
 import { useCallback, useRef } from 'react';
-import { Connection } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { executeNode, getNodeInputValues, ExecutionContext } from '@/lib/nodeExecutor';
 
 export function useNodeExecution() {
   const connectionRef = useRef<Connection | null>(null);
+  const { publicKey, connected } = useWallet();
   
   const {
     nodes,
@@ -85,7 +88,16 @@ export function useNodeExecution() {
     try {
       startExecution();
       const executionOrder = buildExecutionOrder();
-      const results = new Map<string, unknown>();
+      const results = new Map<string, any>();
+      
+      const context: ExecutionContext = {
+        connection: getConnection(),
+        results,
+        wallet: {
+          publicKey: publicKey || null,
+          connected: connected,
+        },
+      };
 
       for (const nodeId of executionOrder) {
         const node = nodes.find(n => n.id === nodeId);
@@ -94,12 +106,21 @@ export function useNodeExecution() {
         setExecutingNode(nodeId);
 
         try {
-          // Simulate node execution
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Get input values from connected edges
+          const inputValues = getNodeInputValues(node, edges, results);
           
-          const result = { executed: true, nodeId };
-          results.set(nodeId, result);
-          setNodeResult(nodeId, result);
+          // Execute the node
+          const output = await executeNode(node, context, inputValues);
+          
+          // Store results
+          results.set(nodeId, output);
+          
+          // Update node with result for display
+          if (node.data.type === 'output-display') {
+            setNodeResult(nodeId, inputValues.value);
+          } else {
+            setNodeResult(nodeId, output);
+          }
         } catch (error) {
           updateNode(nodeId, {
             hasError: true,
@@ -114,16 +135,21 @@ export function useNodeExecution() {
     } catch (error) {
       stopExecution();
       console.error('Workflow execution failed:', error);
+      alert(`Execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }, [
     rpcEndpoint,
     nodes,
+    edges,
+    publicKey,
+    connected,
     startExecution,
     stopExecution,
     setExecutingNode,
     setNodeResult,
     updateNode,
     buildExecutionOrder,
+    getConnection,
   ]);
 
   return {
