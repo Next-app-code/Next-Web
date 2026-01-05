@@ -1,4 +1,17 @@
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { 
+  Connection, 
+  PublicKey, 
+  LAMPORTS_PER_SOL, 
+  Transaction,
+  SystemProgram,
+  TransactionInstruction,
+  sendAndConfirmTransaction,
+} from '@solana/web3.js';
+import { 
+  getAssociatedTokenAddress,
+  createTransferInstruction,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 import { CustomNode } from '@/types/nodes';
 
 export interface ExecutionContext {
@@ -99,6 +112,154 @@ export async function executeNode(
           publicKey: context.wallet.publicKey?.toBase58() || null,
           connected: context.wallet.connected,
         };
+      }
+
+      case 'wallet-sign': {
+        // Note: Actual signing requires wallet adapter in browser context
+        const transaction = inputValues.transaction;
+        if (!transaction) throw new Error('Transaction is required');
+        return { 
+          signedTransaction: transaction,
+          note: 'Wallet signing requires browser interaction'
+        };
+      }
+
+      case 'wallet-sign-message': {
+        // Note: Actual signing requires wallet adapter in browser context
+        const message = inputValues.message;
+        if (!message) throw new Error('Message is required');
+        return { 
+          signature: 'simulated-signature',
+          note: 'Wallet signing requires browser interaction'
+        };
+      }
+
+      // ===== Transaction Nodes =====
+      case 'create-transaction': {
+        const feePayer = inputValues.feePayer;
+        const blockhash = inputValues.blockhash;
+        
+        if (!feePayer) throw new Error('Fee payer is required');
+        if (!blockhash) throw new Error('Blockhash is required');
+        
+        const transaction = new Transaction();
+        transaction.feePayer = typeof feePayer === 'string' ? new PublicKey(feePayer) : feePayer;
+        transaction.recentBlockhash = blockhash;
+        
+        return { transaction };
+      }
+
+      case 'add-instruction': {
+        const transaction = inputValues.transaction;
+        const instruction = inputValues.instruction;
+        
+        if (!transaction) throw new Error('Transaction is required');
+        if (!instruction) throw new Error('Instruction is required');
+        
+        transaction.add(instruction);
+        return { transaction };
+      }
+
+      case 'send-transaction': {
+        const connection = inputValues.connection || context.connection;
+        const transaction = inputValues.transaction;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!transaction) throw new Error('Transaction is required');
+        
+        // Note: Actual sending requires signed transaction
+        return { 
+          signature: 'simulated-tx-signature',
+          confirmed: false,
+          note: 'Transaction sending requires wallet signing'
+        };
+      }
+
+      case 'transfer-sol': {
+        const from = inputValues.from;
+        const to = inputValues.to;
+        const amount = Number(inputValues.amount || 0);
+        
+        if (!from) throw new Error('From address is required');
+        if (!to) throw new Error('To address is required');
+        if (amount <= 0) throw new Error('Amount must be greater than 0');
+        
+        const fromPubkey = typeof from === 'string' ? new PublicKey(from) : from;
+        const toPubkey = typeof to === 'string' ? new PublicKey(to) : to;
+        const lamports = Math.floor(amount * LAMPORTS_PER_SOL);
+        
+        const instruction = SystemProgram.transfer({
+          fromPubkey,
+          toPubkey,
+          lamports,
+        });
+        
+        return { instruction };
+      }
+
+      // ===== Token Nodes =====
+      case 'get-token-accounts': {
+        const connection = inputValues.connection || context.connection;
+        const owner = inputValues.owner;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!owner) throw new Error('Owner is required');
+        
+        const ownerPubkey = typeof owner === 'string' ? new PublicKey(owner) : owner;
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+          ownerPubkey,
+          { programId: TOKEN_PROGRAM_ID }
+        );
+        
+        const accounts = tokenAccounts.value.map(account => ({
+          address: account.pubkey.toBase58(),
+          mint: account.account.data.parsed?.info?.mint,
+          amount: account.account.data.parsed?.info?.tokenAmount?.uiAmount,
+          decimals: account.account.data.parsed?.info?.tokenAmount?.decimals,
+        }));
+        
+        return { accounts };
+      }
+
+      case 'get-token-balance': {
+        const connection = inputValues.connection || context.connection;
+        const tokenAccount = inputValues.tokenAccount;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!tokenAccount) throw new Error('Token account is required');
+        
+        const accountPubkey = typeof tokenAccount === 'string' ? new PublicKey(tokenAccount) : tokenAccount;
+        const balance = await connection.getTokenAccountBalance(accountPubkey);
+        
+        return {
+          balance: balance.value.uiAmount || 0,
+          decimals: balance.value.decimals,
+        };
+      }
+
+      case 'transfer-token': {
+        const source = inputValues.source;
+        const destination = inputValues.destination;
+        const owner = inputValues.owner;
+        const amount = Number(inputValues.amount || 0);
+        
+        if (!source) throw new Error('Source is required');
+        if (!destination) throw new Error('Destination is required');
+        if (!owner) throw new Error('Owner is required');
+        if (amount <= 0) throw new Error('Amount must be greater than 0');
+        
+        const sourcePubkey = typeof source === 'string' ? new PublicKey(source) : source;
+        const destPubkey = typeof destination === 'string' ? new PublicKey(destination) : destination;
+        const ownerPubkey = typeof owner === 'string' ? new PublicKey(owner) : owner;
+        
+        const instruction = createTransferInstruction(
+          sourcePubkey,
+          destPubkey,
+          ownerPubkey,
+          amount
+        );
+        
+        return { instruction };
       }
 
       // ===== Math Nodes =====
