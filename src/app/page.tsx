@@ -7,8 +7,6 @@ import { PropertiesPanel } from '@/components/PropertiesPanel';
 import { KeyboardShortcutsHelp } from '@/components/KeyboardShortcutsHelp';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { useNodeExecution } from '@/hooks/useNodeExecution';
-import { useEffect } from 'react';
 
 export default function Home() {
   const { isPropertiesPanelOpen } = useWorkspaceStore();

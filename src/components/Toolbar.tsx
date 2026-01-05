@@ -117,8 +117,14 @@ export function Toolbar() {
   const handleRun = async () => {
     if (isExecuting) {
       stopExecution();
-    } else {
+      return;
+    }
+    
+    try {
       await executeWorkflow();
+    } catch (error) {
+      console.error('Execution error:', error);
+      stopExecution();
     }
   };
 

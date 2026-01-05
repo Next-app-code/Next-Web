@@ -85,6 +85,13 @@ export function useNodeExecution() {
       return;
     }
 
+    // Prevent multiple executions
+    const currentState = useWorkspaceStore.getState();
+    if (currentState.isExecuting) {
+      console.log('Execution already in progress, skipping...');
+      return;
+    }
+
     try {
       startExecution();
       const executionOrder = buildExecutionOrder();
@@ -122,18 +129,25 @@ export function useNodeExecution() {
           } else {
             setNodeResult(nodeId, output);
           }
+          
+          // Clear executing state for this node
+          updateNode(nodeId, { isExecuting: false });
         } catch (error) {
           updateNode(nodeId, {
             hasError: true,
             errorMessage: error instanceof Error ? error.message : 'Unknown error',
             isExecuting: false,
           });
+          stopExecution();
           throw error;
         }
       }
 
+      // Clear executing node
+      setExecutingNode(null);
       stopExecution();
     } catch (error) {
+      setExecutingNode(null);
       stopExecution();
       console.error('Workflow execution failed:', error);
       alert(`Execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
