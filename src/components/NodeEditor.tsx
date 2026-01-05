@@ -106,12 +106,23 @@ function NodeEditorInner() {
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         connectionMode="loose"
+        connectionLineStyle={{ stroke: '#ffffff', strokeWidth: 2 }}
         fitView
         snapToGrid
         snapGrid={[16, 16]}
         defaultEdgeOptions={{
-          type: 'smoothstep',
-          style: { stroke: '#ffffff', strokeWidth: 2 },
+          type: 'default',
+          animated: false,
+          style: { 
+            stroke: '#e5e5e5', 
+            strokeWidth: 2.5,
+          },
+          markerEnd: {
+            type: 'arrowclosed',
+            color: '#e5e5e5',
+            width: 20,
+            height: 20,
+          },
         }}
         proOptions={{ hideAttribution: true }}
       >

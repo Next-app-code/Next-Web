@@ -521,15 +521,15 @@ export const nodeDefinitions: NodeDefinition[] = [
 ];
 
 export const categoryInfo: Record<string, { label: string; color: string; description: string }> = {
-  rpc: { label: 'RPC', color: '#a855f7', description: 'Solana RPC methods' },
-  wallet: { label: 'Wallet', color: '#f97316', description: 'Wallet operations' },
-  transaction: { label: 'Transaction', color: '#3b82f6', description: 'Transaction building' },
-  token: { label: 'Token', color: '#10b981', description: 'SPL Token operations' },
-  math: { label: 'Math', color: '#ffe66d', description: 'Mathematical operations' },
-  logic: { label: 'Logic', color: '#ec4899', description: 'Logical operations' },
-  input: { label: 'Input', color: '#06b6d4', description: 'Value inputs' },
-  output: { label: 'Output', color: '#8b5cf6', description: 'Display results' },
-  utility: { label: 'Utility', color: '#6b7280', description: 'Utility functions' },
+  rpc: { label: 'RPC', color: '#b3b3b3', description: 'Solana RPC methods' },
+  wallet: { label: 'Wallet', color: '#999999', description: 'Wallet operations' },
+  transaction: { label: 'Transaction', color: '#888888', description: 'Transaction building' },
+  token: { label: 'Token', color: '#c2c2c2', description: 'SPL Token operations' },
+  math: { label: 'Math', color: '#d4d4d4', description: 'Mathematical operations' },
+  logic: { label: 'Logic', color: '#a0a0a0', description: 'Logical operations' },
+  input: { label: 'Input', color: '#e5e5e5', description: 'Value inputs' },
+  output: { label: 'Output', color: '#cccccc', description: 'Display results' },
+  utility: { label: 'Utility', color: '#777777', description: 'Utility functions' },
 };
 
 

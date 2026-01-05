@@ -12,22 +12,22 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
   return (
     <div
       className={`
-        min-w-[180px] rounded-lg overflow-hidden
+        min-w-[200px] rounded-lg overflow-hidden
         ${isExecuting ? 'node-executing' : ''}
         ${hasError ? 'ring-2 ring-red-500' : ''}
-        ${selected ? 'ring-2 ring-node-accent' : ''}
+        ${selected ? 'ring-2 ring-white' : ''}
       `}
       style={{
-        background: '#232340',
-        border: `1px solid ${selected ? color : '#3d3d5c'}`,
+        background: '#2a2a2a',
+        border: `1px solid ${selected ? '#ffffff' : '#404040'}`,
       }}
     >
       {/* Header */}
       <div
-        className="px-3 py-2 text-sm font-semibold tracking-tight"
+        className="px-3 py-2 text-sm font-semibold tracking-tight border-b border-node-border"
         style={{ 
-          background: color,
-          color: isLightColor(color) ? '#0f0f1a' : '#ffffff',
+          background: '#1a1a1a',
+          color: '#ffffff',
         }}
       >
         {label}
@@ -44,14 +44,13 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
               id={input.id}
               className="!w-3 !h-3 !border-2"
               style={{
-                background: getDataTypeColor(input.dataType),
-                borderColor: '#3d3d5c',
-                top: `${28 + (index * 28)}px`,
+                background: '#1a1a1a',
+                borderColor: '#e5e5e5',
               }}
             />
-            <span className="text-xs text-gray-400 ml-2 tracking-tight">
+            <span className="text-xs text-gray-300 ml-2 tracking-tight">
               {input.name}
-              {input.required && <span className="text-red-400 ml-0.5">*</span>}
+              {input.required && <span className="text-gray-500 ml-0.5">*</span>}
             </span>
           </div>
         ))}
@@ -59,7 +58,7 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
         {/* Outputs */}
         {outputs.map((output, index) => (
           <div key={output.id} className="relative flex items-center justify-end py-1">
-            <span className="text-xs text-gray-400 mr-2 tracking-tight">
+            <span className="text-xs text-gray-300 mr-2 tracking-tight">
               {output.name}
             </span>
             <Handle
@@ -68,9 +67,8 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
               id={output.id}
               className="!w-3 !h-3 !border-2"
               style={{
-                background: getDataTypeColor(output.dataType),
-                borderColor: '#3d3d5c',
-                top: `${28 + ((inputs.length + index) * 28)}px`,
+                background: '#1a1a1a',
+                borderColor: '#e5e5e5',
               }}
             />
           </div>
