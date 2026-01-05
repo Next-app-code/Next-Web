@@ -3,7 +3,7 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 
 export const metadata: Metadata = {
-  title: 'Next - Solana Visual Execution Builder',
+  title: 'Next',
   description: 'Build and execute Solana transactions visually with a node-based interface',
   icons: {
     icon: '/minilogo.png',
