@@ -2,7 +2,7 @@
 
 ![NEXT](./navbeo.png)
 
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/NextLabs_)
+[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/NextWorkspace)
 [![Website](https://img.shields.io/badge/Website-000000?style=for-the-badge&logo=About.me&logoColor=white)](https://app.nextlabs.work/)
 [![GitHub stars](https://img.shields.io/github/stars/Next-app-code/Next-Web?style=for-the-badge&logo=github)](https://github.com/Next-app-code/Next-Web/stargazers)
 
