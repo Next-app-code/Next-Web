@@ -361,30 +361,21 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       exportWorkspace: async () => {
         const state = get();
         
-        if (!authAPI.isAuthenticated()) {
-          // Fallback to local export
-          const workspace: Workspace = {
-            id: state.workspaceId,
-            name: state.workspaceName,
-            nodes: state.nodes,
-            edges: state.edges,
-            rpcEndpoint: state.rpcEndpoint,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
+        // Always export current state (not from server)
+        // This allows exporting unsaved workspaces
+        const workspace: Workspace = {
+          id: state.workspaceId,
+          name: state.workspaceName,
+          nodes: state.nodes,
+          edges: state.edges,
+          rpcEndpoint: state.rpcEndpoint,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        
+        try {
           const json = JSON.stringify(workspace, null, 2);
           const blob = new Blob([json], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${state.workspaceName.replace(/\s+/g, '_')}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
-          return;
-        }
-
-        try {
-          const blob = await workspaceAPI.export(state.workspaceId);
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
