@@ -80,12 +80,13 @@ export const CustomNode = memo(function CustomNode({ data, selected }: CustomNod
           </div>
         ))}
 
-        {/* Result Preview */}
+        {/* Result Display */}
         {result !== undefined && (
-          <div className="mt-2 p-2 rounded bg-node-bg text-xs text-gray-300 font-mono overflow-hidden">
-            <div className="truncate">
+          <div className="mt-2 pt-2 border-t border-node-border">
+            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Result</div>
+            <div className="p-2 rounded bg-black border border-node-border text-sm text-white font-mono overflow-auto max-h-32">
               {typeof result === 'object' 
-                ? JSON.stringify(result).slice(0, 50) + '...'
+                ? JSON.stringify(result, null, 2)
                 : String(result)
               }
             </div>
