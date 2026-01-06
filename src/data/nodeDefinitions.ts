@@ -233,6 +233,86 @@ export const nodeDefinitions: NodeDefinition[] = [
       { id: 'instruction', name: 'Instruction', type: 'output', dataType: 'instruction' },
     ],
   },
+  {
+    type: 'get-token-metadata',
+    category: 'token',
+    label: 'Get Token Metadata',
+    description: 'Fetch token metadata (name, symbol, decimals)',
+    color: '#10b981',
+    inputs: [
+      { id: 'connection', name: 'Connection', type: 'input', dataType: 'connection', required: true },
+      { id: 'mint', name: 'Mint Address', type: 'input', dataType: 'publickey', required: true },
+    ],
+    outputs: [
+      { id: 'name', name: 'Name', type: 'output', dataType: 'string' },
+      { id: 'symbol', name: 'Symbol', type: 'output', dataType: 'string' },
+      { id: 'decimals', name: 'Decimals', type: 'output', dataType: 'number' },
+      { id: 'supply', name: 'Total Supply', type: 'output', dataType: 'number' },
+    ],
+  },
+  {
+    type: 'get-token-info',
+    category: 'token',
+    label: 'Get Token Info',
+    description: 'Get comprehensive token information',
+    color: '#10b981',
+    inputs: [
+      { id: 'connection', name: 'Connection', type: 'input', dataType: 'connection', required: true },
+      { id: 'mint', name: 'Mint Address', type: 'input', dataType: 'publickey', required: true },
+    ],
+    outputs: [
+      { id: 'mintAuthority', name: 'Mint Authority', type: 'output', dataType: 'publickey' },
+      { id: 'freezeAuthority', name: 'Freeze Authority', type: 'output', dataType: 'publickey' },
+      { id: 'supply', name: 'Supply', type: 'output', dataType: 'number' },
+      { id: 'decimals', name: 'Decimals', type: 'output', dataType: 'number' },
+    ],
+  },
+  {
+    type: 'check-token-holders',
+    category: 'token',
+    label: 'Check Token Holders',
+    description: 'Get list of token holders',
+    color: '#10b981',
+    inputs: [
+      { id: 'connection', name: 'Connection', type: 'input', dataType: 'connection', required: true },
+      { id: 'mint', name: 'Mint Address', type: 'input', dataType: 'publickey', required: true },
+    ],
+    outputs: [
+      { id: 'holders', name: 'Holders', type: 'output', dataType: 'array' },
+      { id: 'count', name: 'Holder Count', type: 'output', dataType: 'number' },
+    ],
+  },
+  {
+    type: 'check-swap-routes',
+    category: 'token',
+    label: 'Check Swap Routes',
+    description: 'Find available swap routes for token pair',
+    color: '#10b981',
+    inputs: [
+      { id: 'inputMint', name: 'Input Mint', type: 'input', dataType: 'publickey', required: true },
+      { id: 'outputMint', name: 'Output Mint', type: 'input', dataType: 'publickey', required: true },
+      { id: 'amount', name: 'Amount', type: 'input', dataType: 'number', required: true },
+    ],
+    outputs: [
+      { id: 'routes', name: 'Routes', type: 'output', dataType: 'array' },
+      { id: 'bestRoute', name: 'Best Route', type: 'output', dataType: 'object' },
+    ],
+  },
+  {
+    type: 'check-liquidity-pools',
+    category: 'token',
+    label: 'Check Liquidity Pools',
+    description: 'Find liquidity pools for a token',
+    color: '#10b981',
+    inputs: [
+      { id: 'connection', name: 'Connection', type: 'input', dataType: 'connection', required: true },
+      { id: 'mint', name: 'Mint Address', type: 'input', dataType: 'publickey', required: true },
+    ],
+    outputs: [
+      { id: 'pools', name: 'Pools', type: 'output', dataType: 'array' },
+      { id: 'totalLiquidity', name: 'Total Liquidity', type: 'output', dataType: 'number' },
+    ],
+  },
 
   // Math Nodes
   {

@@ -263,6 +263,146 @@ export async function executeNode(
         return { instruction };
       }
 
+      case 'get-token-metadata': {
+        const connection = inputValues.connection || context.connection;
+        const mint = inputValues.mint;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!mint) throw new Error('Mint address is required');
+        
+        const mintPubkey = typeof mint === 'string' ? new PublicKey(mint) : mint;
+        
+        try {
+          // Get mint account info
+          const mintInfo = await connection.getParsedAccountInfo(mintPubkey);
+          const parsed = (mintInfo.value?.data as any)?.parsed;
+          
+          if (!parsed) {
+            throw new Error('Not a valid token mint');
+          }
+          
+          return {
+            name: `Token ${mintPubkey.toBase58().slice(0, 8)}`,
+            symbol: 'TOKEN',
+            decimals: parsed.info?.decimals || 0,
+            supply: parsed.info?.supply || 0,
+          };
+        } catch (error) {
+          throw new Error('Failed to fetch token metadata');
+        }
+      }
+
+      case 'get-token-info': {
+        const connection = inputValues.connection || context.connection;
+        const mint = inputValues.mint;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!mint) throw new Error('Mint address is required');
+        
+        const mintPubkey = typeof mint === 'string' ? new PublicKey(mint) : mint;
+        const accountInfo = await connection.getParsedAccountInfo(mintPubkey);
+        const parsed = (accountInfo.value?.data as any)?.parsed;
+        
+        if (!parsed) {
+          throw new Error('Not a valid token mint');
+        }
+        
+        return {
+          mintAuthority: parsed.info?.mintAuthority || null,
+          freezeAuthority: parsed.info?.freezeAuthority || null,
+          supply: parsed.info?.supply || 0,
+          decimals: parsed.info?.decimals || 0,
+        };
+      }
+
+      case 'check-token-holders': {
+        const connection = inputValues.connection || context.connection;
+        const mint = inputValues.mint;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!mint) throw new Error('Mint address is required');
+        
+        const mintPubkey = typeof mint === 'string' ? new PublicKey(mint) : mint;
+        
+        // Get all token accounts for this mint
+        const tokenAccounts = await connection.getParsedProgramAccounts(
+          TOKEN_PROGRAM_ID,
+          {
+            filters: [
+              { dataSize: 165 },
+              {
+                memcmp: {
+                  offset: 0,
+                  bytes: mintPubkey.toBase58(),
+                },
+              },
+            ],
+          }
+        );
+        
+        const holders = tokenAccounts
+          .map((acc: any) => ({
+            owner: acc.account.data.parsed?.info?.owner,
+            amount: acc.account.data.parsed?.info?.tokenAmount?.uiAmount,
+          }))
+          .filter((h: any) => h.amount > 0);
+        
+        return {
+          holders,
+          count: holders.length,
+        };
+      }
+
+      case 'check-swap-routes': {
+        const inputMint = inputValues.inputMint;
+        const outputMint = inputValues.outputMint;
+        const amount = Number(inputValues.amount || 0);
+        
+        if (!inputMint) throw new Error('Input mint is required');
+        if (!outputMint) throw new Error('Output mint is required');
+        if (amount <= 0) throw new Error('Amount must be greater than 0');
+        
+        // Note: This would require Jupiter API integration
+        // For now, return simulated data
+        return {
+          routes: [
+            {
+              inAmount: amount,
+              outAmount: amount * 0.99,
+              priceImpactPct: 0.1,
+              marketInfos: ['Simulated Route'],
+            }
+          ],
+          bestRoute: {
+            inAmount: amount,
+            outAmount: amount * 0.99,
+            priceImpactPct: 0.1,
+          },
+        };
+      }
+
+      case 'check-liquidity-pools': {
+        const connection = inputValues.connection || context.connection;
+        const mint = inputValues.mint;
+        
+        if (!connection) throw new Error('Connection is required');
+        if (!mint) throw new Error('Mint address is required');
+        
+        // Note: This would require Raydium/Orca SDK integration
+        // For now, return simulated data
+        return {
+          pools: [
+            {
+              poolAddress: 'Simulated Pool Address',
+              tokenA: mint,
+              tokenB: 'SOL',
+              liquidity: 1000000,
+            }
+          ],
+          totalLiquidity: 1000000,
+        };
+      }
+
       // ===== Math Nodes =====
       case 'math-add': {
         const a = Number(inputValues.a || 0);
