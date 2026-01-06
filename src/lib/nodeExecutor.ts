@@ -379,23 +379,31 @@ export async function executeNode(
         if (!outputMint) throw new Error('Output mint is required');
         if (amount <= 0) throw new Error('Amount must be greater than 0');
         
-        // Note: This would require Jupiter API integration
-        // For now, return simulated data
-        return {
-          routes: [
-            {
-              inAmount: amount,
-              outAmount: amount * 0.99,
-              priceImpactPct: 0.1,
-              marketInfos: ['Simulated Route'],
-            }
-          ],
-          bestRoute: {
-            inAmount: amount,
-            outAmount: amount * 0.99,
-            priceImpactPct: 0.1,
-          },
-        };
+        // Call Jupiter API for real swap routes
+        try {
+          const response = await fetch(
+            `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}`
+          );
+          
+          if (!response.ok) {
+            throw new Error('Jupiter API request failed');
+          }
+          
+          const data = await response.json();
+          
+          return {
+            routes: data.data || [],
+            bestRoute: data.data?.[0] || null,
+            priceImpact: data.data?.[0]?.priceImpactPct || 0,
+          };
+        } catch (error) {
+          // Fallback to basic info if Jupiter API fails
+          return {
+            routes: [],
+            bestRoute: null,
+            error: 'Could not fetch routes. Jupiter API may be unavailable.',
+          };
+        }
       }
 
       case 'check-liquidity-pools': {
@@ -405,19 +413,34 @@ export async function executeNode(
         if (!connection) throw new Error('Connection is required');
         if (!mint) throw new Error('Mint address is required');
         
-        // Note: This would require Raydium/Orca SDK integration
-        // For now, return simulated data
-        return {
-          pools: [
-            {
-              poolAddress: 'Simulated Pool Address',
-              tokenA: mint,
-              tokenB: 'SOL',
-              liquidity: 1000000,
-            }
-          ],
-          totalLiquidity: 1000000,
-        };
+        const mintPubkey = typeof mint === 'string' ? new PublicKey(mint) : mint;
+        
+        // Query for token accounts that might be pool accounts
+        // This is a basic implementation - full integration would use Raydium/Orca SDKs
+        try {
+          const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+            mintPubkey,
+            { programId: TOKEN_PROGRAM_ID }
+          );
+          
+          return {
+            pools: tokenAccounts.value.map((acc: any) => ({
+              address: acc.pubkey.toBase58(),
+              mint: mintPubkey.toBase58(),
+              balance: acc.account.data.parsed?.info?.tokenAmount?.uiAmount || 0,
+            })),
+            totalLiquidity: tokenAccounts.value.reduce((sum: number, acc: any) => {
+              return sum + (acc.account.data.parsed?.info?.tokenAmount?.uiAmount || 0);
+            }, 0),
+            note: 'Basic pool detection. For full DEX integration, use Raydium/Orca SDK',
+          };
+        } catch (error) {
+          return {
+            pools: [],
+            totalLiquidity: 0,
+            error: 'Failed to query liquidity pools',
+          };
+        }
       }
 
       // ===== Math Nodes =====
