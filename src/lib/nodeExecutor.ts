@@ -17,7 +17,12 @@ import { CustomNode } from '@/types/nodes';
 export interface ExecutionContext {
   connection: Connection | null;
   results: Map<string, any>;
-  wallet: { publicKey: PublicKey | null; connected: boolean };
+  wallet: { 
+    publicKey: PublicKey | null; 
+    connected: boolean;
+    signTransaction?: (tx: Transaction) => Promise<Transaction>;
+    signMessage?: (message: Uint8Array) => Promise<Uint8Array>;
+  };
   rpcEndpoint: string;
 }
 
@@ -116,23 +121,30 @@ export async function executeNode(
       }
 
       case 'wallet-sign': {
-        // Note: Actual signing requires wallet adapter in browser context
         const transaction = inputValues.transaction;
         if (!transaction) throw new Error('Transaction is required');
-        return { 
-          signedTransaction: transaction,
-          note: 'Wallet signing requires browser interaction'
-        };
+        
+        if (!context.wallet.signTransaction) {
+          throw new Error('Wallet does not support transaction signing');
+        }
+        
+        const signedTransaction = await context.wallet.signTransaction(transaction);
+        return { signedTransaction };
       }
 
       case 'wallet-sign-message': {
-        // Note: Actual signing requires wallet adapter in browser context
         const message = inputValues.message;
         if (!message) throw new Error('Message is required');
-        return { 
-          signature: 'simulated-signature',
-          note: 'Wallet signing requires browser interaction'
-        };
+        
+        if (!context.wallet.signMessage) {
+          throw new Error('Wallet does not support message signing');
+        }
+        
+        const messageBytes = new TextEncoder().encode(message);
+        const signatureBytes = await context.wallet.signMessage(messageBytes);
+        const signature = Buffer.from(signatureBytes).toString('base64');
+        
+        return { signature };
       }
 
       // ===== Transaction Nodes =====
@@ -168,11 +180,16 @@ export async function executeNode(
         if (!connection) throw new Error('Connection is required');
         if (!transaction) throw new Error('Transaction is required');
         
-        // Note: Actual sending requires signed transaction
+        // Send transaction to blockchain
+        const signature = await connection.sendRawTransaction(transaction.serialize());
+        
+        // Wait for confirmation
+        const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+        
         return { 
-          signature: 'simulated-tx-signature',
-          confirmed: false,
-          note: 'Transaction sending requires wallet signing'
+          signature,
+          confirmed: !confirmation.value.err,
+          error: confirmation.value.err,
         };
       }
 
