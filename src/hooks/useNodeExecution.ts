@@ -31,7 +31,7 @@ function filterSerializableResult(result: any): any {
 
 export function useNodeExecution() {
   const connectionRef = useRef<Connection | null>(null);
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connected, signTransaction, signMessage } = useWallet();
   
   const {
     nodes,
@@ -132,6 +132,8 @@ export function useNodeExecution() {
         wallet: {
           publicKey: publicKey || null,
           connected: connected,
+          signTransaction,
+          signMessage,
         },
         rpcEndpoint: rpcEndpoint,
       };
