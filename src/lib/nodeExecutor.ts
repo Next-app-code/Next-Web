@@ -545,6 +545,106 @@ export async function executeNode(
         return { logged: true, value };
       }
 
+      // ===== Bags Launchpad Nodes =====
+      case 'bags-bonding-curve': {
+        const tokenAddress = inputValues.tokenAddress || values?.tokenAddress;
+        const apiKey = inputValues.apiKey || values?.apiKey;
+        
+        if (!tokenAddress) throw new Error('Token address is required');
+        
+        try {
+          const response = await fetch(
+            `https://public-api-v2.bags.fm/api/v1/tokens/${tokenAddress}`,
+            {
+              headers: apiKey ? { 'x-api-key': apiKey } : {},
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch from Bags API');
+          }
+          
+          const data = await response.json();
+          
+          return {
+            progress: data.bondingCurveProgress || 0,
+            isMigrated: data.migrated || false,
+            marketCap: data.marketCap || 0,
+            canMigrate: (data.bondingCurveProgress || 0) >= 100 && !data.migrated,
+          };
+        } catch (error) {
+          throw new Error('Failed to check bonding curve status');
+        }
+      }
+
+      case 'bags-migration-check': {
+        const tokenAddress = inputValues.tokenAddress || values?.tokenAddress;
+        const apiKey = inputValues.apiKey || values?.apiKey;
+        
+        if (!tokenAddress) throw new Error('Token address is required');
+        
+        try {
+          const response = await fetch(
+            `https://public-api-v2.bags.fm/api/v1/tokens/${tokenAddress}`,
+            {
+              headers: apiKey ? { 'x-api-key': apiKey } : {},
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch from Bags API');
+          }
+          
+          const data = await response.json();
+          const progress = data.bondingCurveProgress || 0;
+          const migrated = data.migrated || false;
+          
+          return {
+            ready: progress >= 100 && !migrated,
+            progress,
+            remaining: Math.max(0, 100 - progress),
+            message: migrated 
+              ? 'Token already migrated to liquidity pool'
+              : progress >= 100
+                ? 'Token is ready for migration!'
+                : `${(100 - progress).toFixed(2)}% remaining to complete bonding curve`,
+          };
+        } catch (error) {
+          throw new Error('Failed to check migration status');
+        }
+      }
+
+      case 'bags-token-info': {
+        const tokenAddress = inputValues.tokenAddress || values?.tokenAddress;
+        const apiKey = inputValues.apiKey || values?.apiKey;
+        
+        if (!tokenAddress) throw new Error('Token address is required');
+        
+        try {
+          const response = await fetch(
+            `https://public-api-v2.bags.fm/api/v1/tokens/${tokenAddress}`,
+            {
+              headers: apiKey ? { 'x-api-key': apiKey } : {},
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch from Bags API');
+          }
+          
+          const data = await response.json();
+          
+          return {
+            name: data.name,
+            symbol: data.symbol,
+            price: data.price,
+            volume24h: data.volume24h,
+          };
+        } catch (error) {
+          throw new Error('Failed to get token info');
+        }
+      }
+
       // ===== Loop Nodes =====
       case 'loop-for-each': {
         const array = inputValues.array;

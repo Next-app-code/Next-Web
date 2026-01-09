@@ -314,6 +314,59 @@ export const nodeDefinitions: NodeDefinition[] = [
     ],
   },
 
+  // Bags Launchpad Nodes
+  {
+    type: 'bags-bonding-curve',
+    category: 'token',
+    label: 'Bags: Bonding Curve Status',
+    description: 'Check Bags.fm bonding curve progress',
+    color: '#10b981',
+    inputs: [
+      { id: 'tokenAddress', name: 'Token Address', type: 'input', dataType: 'publickey', required: true },
+      { id: 'apiKey', name: 'API Key', type: 'input', dataType: 'string' },
+    ],
+    outputs: [
+      { id: 'progress', name: 'Progress %', type: 'output', dataType: 'number' },
+      { id: 'isMigrated', name: 'Is Migrated', type: 'output', dataType: 'boolean' },
+      { id: 'marketCap', name: 'Market Cap', type: 'output', dataType: 'number' },
+      { id: 'canMigrate', name: 'Can Migrate', type: 'output', dataType: 'boolean' },
+    ],
+  },
+  {
+    type: 'bags-migration-check',
+    category: 'token',
+    label: 'Bags: Migration Checker',
+    description: 'Check if token is ready for migration',
+    color: '#10b981',
+    inputs: [
+      { id: 'tokenAddress', name: 'Token Address', type: 'input', dataType: 'publickey', required: true },
+      { id: 'apiKey', name: 'API Key', type: 'input', dataType: 'string' },
+    ],
+    outputs: [
+      { id: 'ready', name: 'Ready', type: 'output', dataType: 'boolean' },
+      { id: 'progress', name: 'Progress %', type: 'output', dataType: 'number' },
+      { id: 'remaining', name: 'Remaining %', type: 'output', dataType: 'number' },
+      { id: 'message', name: 'Status Message', type: 'output', dataType: 'string' },
+    ],
+  },
+  {
+    type: 'bags-token-info',
+    category: 'token',
+    label: 'Bags: Token Info',
+    description: 'Get Bags.fm token launch details',
+    color: '#10b981',
+    inputs: [
+      { id: 'tokenAddress', name: 'Token Address', type: 'input', dataType: 'publickey', required: true },
+      { id: 'apiKey', name: 'API Key', type: 'input', dataType: 'string' },
+    ],
+    outputs: [
+      { id: 'name', name: 'Name', type: 'output', dataType: 'string' },
+      { id: 'symbol', name: 'Symbol', type: 'output', dataType: 'string' },
+      { id: 'price', name: 'Price', type: 'output', dataType: 'number' },
+      { id: 'volume24h', name: '24h Volume', type: 'output', dataType: 'number' },
+    ],
+  },
+
   // Math Nodes
   {
     type: 'math-add',
