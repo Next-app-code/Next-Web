@@ -158,14 +158,9 @@ export function Toolbar() {
         </button>
 
         {/* $NEXT Token */}
-        <a
-          href="https://pump.fun/coin/HZ2vrUNo4xVfF85oVyodRLFG1WCnZCRGe3qBcAUZpump"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight font-mono"
-        >
+        <span className="px-3 py-1.5 text-sm text-gray-300 tracking-tight font-mono">
           $NEXT
-        </a>
+        </span>
 
         {/* Twitter */}
         <a

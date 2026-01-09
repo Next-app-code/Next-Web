@@ -8,9 +8,6 @@
 
 Visual execution builder for Solana blockchain operations.
 
-**CA**: `HZ2vrUNo4xVfF85oVyodRLFG1WCnZCRGe3qBcAUZpump`  
-[View on Pump.fun](https://pump.fun/coin/HZ2vrUNo4xVfF85oVyodRLFG1WCnZCRGe3qBcAUZpump)
-
 </div>
 
 ## Overview
