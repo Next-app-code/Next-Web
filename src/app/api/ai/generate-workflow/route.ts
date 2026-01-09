@@ -133,13 +133,14 @@ Rules:
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-5.2',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
         max_tokens: 4000,
+        reasoning_effort: 'high',
       }),
     });
     
@@ -150,6 +151,7 @@ Rules:
     
     const data: any = await response.json();
     const content = data.choices[0]?.message?.content;
+    const reasoning = data.choices[0]?.message?.reasoning_content;
     
     if (!content) {
       throw new Error('No response from AI');
@@ -166,7 +168,8 @@ Rules:
     return NextResponse.json({
       workflow,
       prompt,
-      model: 'gpt-4o',
+      model: 'gpt-5.2',
+      reasoning: reasoning || null,
     });
   } catch (error) {
     console.error('AI workflow generation error:', error);
