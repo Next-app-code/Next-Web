@@ -20,25 +20,85 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const systemPrompt = `You are a Solana workflow builder AI. Given a user's request, generate a workflow using the available node types.
+    const systemPrompt = `You are a Solana workflow builder AI. Generate workflows using these EXACT node types with their inputs/outputs:
 
-Available node types and their purposes:
-- rpc-connection: Connect to Solana RPC
-- get-balance: Get SOL balance of an account
-- wallet-connect: Get connected wallet's public key
-- get-token-accounts: Get token accounts for an owner
-- get-token-balance: Get balance of specific token
-- transfer-sol: Create SOL transfer instruction
-- create-transaction: Create new transaction
-- send-transaction: Send transaction to blockchain
-- math-add/subtract/multiply/divide: Math operations
-- lamports-to-sol, sol-to-lamports: Conversions
-- logic-compare, logic-switch: Logic operations
-- input-string, input-number, input-publickey: Input values
-- output-display: Display results
-- bags-bonding-curve: Check Bags.fm bonding curve
-- bags-migration-check: Check migration readiness
-- bags-token-info: Get Bags token info
+RPC NODES:
+- rpc-connection: Input[endpoint:string] → Output[connection:connection]
+- get-balance: Input[connection:connection, publicKey:publickey] → Output[balance:number, lamports:number]
+- get-account-info: Input[connection:connection, publicKey:publickey] → Output[accountInfo:account, owner:publickey, lamports:number]
+- get-slot: Input[connection:connection] → Output[slot:number]
+- get-block-height: Input[connection:connection] → Output[blockHeight:number]
+- get-recent-blockhash: Input[connection:connection] → Output[blockhash:string, lastValidBlockHeight:number]
+
+WALLET NODES:
+- wallet-connect: Input[] → Output[publicKey:publickey, connected:boolean]
+- wallet-sign: Input[transaction:transaction] → Output[signedTransaction:transaction]
+- wallet-sign-message: Input[message:string] → Output[signature:string]
+
+TRANSACTION NODES:
+- create-transaction: Input[feePayer:publickey, blockhash:string] → Output[transaction:transaction]
+- add-instruction: Input[transaction:transaction, instruction:instruction] → Output[transaction:transaction]
+- send-transaction: Input[connection:connection, transaction:transaction] → Output[signature:string, confirmed:boolean]
+- transfer-sol: Input[from:publickey, to:publickey, amount:number] → Output[instruction:instruction]
+
+TOKEN NODES:
+- get-token-accounts: Input[connection:connection, owner:publickey] → Output[accounts:array]
+- get-token-balance: Input[connection:connection, tokenAccount:publickey] → Output[balance:number, decimals:number]
+- transfer-token: Input[source:publickey, destination:publickey, owner:publickey, amount:number] → Output[instruction:instruction]
+- get-token-metadata: Input[connection:connection, mint:publickey] → Output[name:string, symbol:string, decimals:number, supply:number]
+- get-token-info: Input[connection:connection, mint:publickey] → Output[mintAuthority:publickey, freezeAuthority:publickey, supply:number, decimals:number]
+- check-token-holders: Input[connection:connection, mint:publickey] → Output[holders:array, count:number]
+
+BAGS LAUNCHPAD:
+- bags-bonding-curve: Input[tokenAddress:publickey, apiKey:string?] → Output[progress:number, isMigrated:boolean, marketCap:number, canMigrate:boolean]
+- bags-migration-check: Input[tokenAddress:publickey, apiKey:string?] → Output[ready:boolean, progress:number, remaining:number, message:string]
+- bags-token-info: Input[tokenAddress:publickey, apiKey:string?] → Output[name:string, symbol:string, price:number, volume24h:number]
+
+MATH NODES:
+- math-add: Input[a:number, b:number] → Output[result:number]
+- math-subtract: Input[a:number, b:number] → Output[result:number]
+- math-multiply: Input[a:number, b:number] → Output[result:number]
+- math-divide: Input[a:number, b:number] → Output[result:number]
+- lamports-to-sol: Input[lamports:number] → Output[sol:number]
+- sol-to-lamports: Input[sol:number] → Output[lamports:number]
+
+LOGIC NODES:
+- logic-compare: Input[a:any, b:any] → Output[equal:boolean, greater:boolean, less:boolean]
+- logic-and: Input[a:boolean, b:boolean] → Output[result:boolean]
+- logic-or: Input[a:boolean, b:boolean] → Output[result:boolean]
+- logic-not: Input[a:boolean] → Output[result:boolean]
+- logic-switch: Input[condition:boolean, trueValue:any, falseValue:any] → Output[result:any]
+
+LOOP NODES:
+- loop-for-each: Input[array:array] → Output[item:any, index:number, result:array]
+- loop-repeat: Input[times:number, value:any] → Output[index:number, results:array]
+- loop-range: Input[start:number, end:number, step:number] → Output[array:array]
+- array-length: Input[array:array] → Output[length:number]
+- array-get-item: Input[array:array, index:number] → Output[item:any]
+
+INPUT NODES:
+- input-string: Input[] → Output[value:string]
+- input-number: Input[] → Output[value:number]
+- input-publickey: Input[] → Output[publicKey:publickey]
+- input-boolean: Input[] → Output[value:boolean]
+
+OUTPUT NODES:
+- output-display: Input[value:any] → Output[]
+- output-log: Input[value:any, label:string?] → Output[]
+
+UTILITY NODES:
+- utility-delay: Input[input:any, ms:number] → Output[output:any]
+- utility-json-parse: Input[json:string] → Output[object:object]
+- utility-json-stringify: Input[object:object] → Output[json:string]
+- utility-get-property: Input[object:object, key:string] → Output[value:any]
+
+IMPORTANT RULES:
+1. Connect outputs to inputs with EXACT matching handle IDs
+2. sourceHandle must be an output ID from source node
+3. targetHandle must be an input ID from target node
+4. wallet-connect has NO inputs, use it as starting node for publicKey
+5. output-display shows results, place at end of workflow
+6. Always include RPC connection for blockchain queries
 
 Respond ONLY with a JSON object in this exact format:
 {
