@@ -179,7 +179,10 @@ export function AIBuilder() {
             
             <div className="mt-3 pt-3 border-t border-node-border">
               <p className="text-xs text-gray-500 tracking-tight">
-                💡 Powered by OpenAI GPT-4o
+                💡 Powered by OpenAI GPT-5.2 with reasoning
+              </p>
+              <p className="text-xs text-gray-600 tracking-tight mt-1">
+                Advanced AI understanding of Solana workflows
               </p>
             </div>
           </div>
