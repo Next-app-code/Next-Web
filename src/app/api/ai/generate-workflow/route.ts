@@ -133,15 +133,13 @@ Rules:
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-5.2',
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        reasoning: {
-          effort: 'high'
-        },
-        max_output_tokens: 4000,
+        temperature: 0.7,
+        max_tokens: 4000,
       }),
     });
     
@@ -169,8 +167,7 @@ Rules:
     return NextResponse.json({
       workflow,
       prompt,
-      model: 'gpt-5.2',
-      reasoning: reasoning || null,
+      model: 'gpt-4o',
     });
   } catch (error) {
     console.error('AI workflow generation error:', error);
