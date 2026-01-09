@@ -138,9 +138,10 @@ Rules:
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        temperature: 0.7,
-        max_tokens: 4000,
-        reasoning_effort: 'high',
+        reasoning: {
+          effort: 'high'
+        },
+        max_output_tokens: 4000,
       }),
     });
     
