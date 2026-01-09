@@ -158,9 +158,14 @@ export function Toolbar() {
         </button>
 
         {/* $NEXT Token */}
-        <span className="px-3 py-1.5 text-sm text-gray-300 tracking-tight font-mono">
+        <a
+          href="https://bags.fm/3N5GNJtneiTACKcSueW9abCWgdKjgxTs56f4RagBBAGS"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors tracking-tight font-mono"
+        >
           $NEXT
-        </span>
+        </a>
 
         {/* Twitter */}
         <a
