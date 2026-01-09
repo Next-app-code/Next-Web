@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { Toolbar } from '@/components/Toolbar';
 import { PropertiesPanel } from '@/components/PropertiesPanel';
 import { KeyboardShortcutsHelp } from '@/components/KeyboardShortcutsHelp';
+import { AIBuilder } from '@/components/AIBuilder';
 import { useWorkspaceStore } from '@/stores/workspaceStore';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
@@ -25,6 +26,7 @@ export default function Home() {
         {isPropertiesPanelOpen && <PropertiesPanel />}
       </div>
       <KeyboardShortcutsHelp />
+      <AIBuilder />
     </main>
   );
 }
